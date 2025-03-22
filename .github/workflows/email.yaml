@@ -23,8 +23,8 @@ jobs:
 
       - name: Extract Message from Flask App
         run: |
-          MESSAGE=$(docker exec flask-container printenv FLASK_MESSAGE)
-          echo "FLASK_MESSAGE=$MESSAGE" >> $GITHUB_ENV
+           MESSAGE=$(curl -s http://localhost:5000)
+           echo "FLASK_MESSAGE=$MESSAGE" >> $GITHUB_ENV
 
       - name: Check if Container is Running
         run: |
