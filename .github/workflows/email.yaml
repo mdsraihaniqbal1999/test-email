@@ -1,0 +1,22 @@
+name: Send Email Notification
+
+on:
+  workflow_dispatch:  # Manually trigger workflow
+
+jobs:
+  send_email:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Send Email
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com  # Change for Outlook, AWS SES, etc.
+          server_port: 587
+          username: ${{ secrets.EMAIL_USERNAME }}  # Your email (stored in secrets)
+          password: ${{ secrets.EMAIL_PASSWORD }}  # App password or SMTP password
+          subject: "GitHub Actions Notification 🚀"
+          body: "Hello! This is an automated email sent from GitHub Actions. ✅"
+          to: "raihaniqbal@kpmg.com"  # Replace with actual recipient
+          from: "rockrocking1995@gmail.com"
+          content_type: text/plain
