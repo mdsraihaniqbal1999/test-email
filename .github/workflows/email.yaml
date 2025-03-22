@@ -17,9 +17,14 @@ jobs:
       - name: Run Container
         run: |
           docker run -d --name flask-container -p 5000:5000 my-flask-app
-          
+
       - name: Wait for Container to Start
         run: sleep 10
+
+      - name: Extract Message from Flask App
+        run: |
+          MESSAGE=$(docker exec flask-container printenv FLASK_MESSAGE)
+          echo "FLASK_MESSAGE=$MESSAGE" >> $GITHUB_ENV
 
       - name: Check if Container is Running
         run: |
@@ -33,7 +38,7 @@ jobs:
   send_email:
     needs: build_and_run_container
     runs-on: ubuntu-latest
-    if: success()  # Only runs if previous job succeeded
+    if: success()  # Only runs if the container is running
     steps:
       - name: Send Email Notification
         uses: dawidd6/action-send-mail@v3
@@ -42,9 +47,9 @@ jobs:
           server_port: 587
           username: ${{ secrets.EMAIL_USERNAME }}
           password: ${{ secrets.EMAIL_PASSWORD }}
-          subject: "Flask Container Deployment Successful ✅"
-          body: "The Flask container is successfully running and deployed!"
-          to: "raihaniqbal@kpmg.com"  # Replace with recipient email
+          subject: "Flask App Deployment Successful ✅"
+          body: "${{ env.FLASK_MESSAGE }}"  # Use the same message from Flask
+          to: "raihaniqbal@kpmg.com" # Replace with recipient email
           from: "GitHub Actions rockrocking1995@gmail.com"
           content_type: text/plain
 
